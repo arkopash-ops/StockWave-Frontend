@@ -5,16 +5,20 @@ import {
   Alert,
   Box,
   CircularProgress,
-  List,
-  ListItem,
-  ListItemText,
   Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Typography,
 } from "@mui/material";
 
 const AUTH_TOKEN_KEY = "token";
 const PROFILE_API_URL = "/api/auth/profile";
-const SOCKET_SERVER_URL = "http://localhost:5000";
+const SOCKET_SERVER_URL =
+  import.meta.env.VITE_SOCKET_SERVER_URL ?? "http://localhost:8080";
 
 const socket = io(SOCKET_SERVER_URL, {
   autoConnect: false,
@@ -24,6 +28,7 @@ interface IUser {
   id: string;
   name: string;
   email: string;
+  role: string;
 }
 
 interface UserListResponse {
@@ -80,91 +85,146 @@ const AdminDashboard = () => {
   return (
     <Box
       sx={{
-        width: "100%",
-        maxWidth: 960,
+        width: "70%",
+        padding: 4,
+        borderRadius: 3,
+        backdropFilter: "blur(12px)",
+        background: "rgba(0, 0, 0, 0.6)",
+        boxShadow: "0 0 30px rgba(0, 255, 234, 0.2)",
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        mx: "auto",
         mt: { xs: 12, md: 14 },
-        px: 2,
       }}
     >
+      <Typography variant="h5" textAlign="center" sx={{ fontWeight: 700 }}>
+        Admin Dashboard
+      </Typography>
+      <Typography
+        variant="body2"
+        textAlign="center"
+        sx={{ opacity: 0.7, mb: 2 }}
+      >
+        Monitor registered users and watch new accounts appear in real time.
+      </Typography>
+
+      {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+
       <Paper
         elevation={0}
         sx={{
-          p: { xs: 3, md: 4 },
-          borderRadius: 4,
-          backdropFilter: "blur(14px)",
-          background: "rgba(0, 0, 0, 0.62)",
+          p: 2,
+          borderRadius: 3,
+          background: "rgba(0, 0, 0, 0.5)",
           border: "1px solid rgba(0, 255, 234, 0.18)",
-          boxShadow: "0 0 30px rgba(0, 255, 234, 0.16)",
-          color: "#00ffea",
+          boxShadow: "0 0 20px rgba(0, 255, 234, 0.15)",
         }}
       >
-        <Typography variant="h4" fontWeight={700} gutterBottom>
-          Admin Dashboard
-        </Typography>
-        <Typography variant="body1" sx={{ opacity: 0.8, mb: 3 }}>
-          Monitor registered users and watch new accounts appear in real time.
-        </Typography>
-
-        {errorMessage ? (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {errorMessage}
-          </Alert>
-        ) : null}
-
-        <Paper
-          elevation={0}
-          sx={{
-            p: 3,
-            borderRadius: 3,
-            background: "rgba(0, 255, 234, 0.05)",
-            border: "1px solid rgba(0, 255, 234, 0.14)",
-          }}
+        <Typography
+          variant="h6"
+          sx={{ color: "#00ffea", fontWeight: 600, mb: 2 }}
         >
-          <Typography variant="h6" fontWeight={600} gutterBottom>
-            Users
-          </Typography>
+          Users
+        </Typography>
 
-          {isLoading ? (
-            <Box
-              sx={{
-                py: 5,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <CircularProgress sx={{ color: "#00ffea" }} />
-            </Box>
-          ) : users.length === 0 ? (
-            <Typography variant="body2" sx={{ opacity: 0.75 }}>
-              No users available yet.
-            </Typography>
-          ) : (
-            <List disablePadding>
-              {users.map((user, index) => (
-                <ListItem
-                  key={user.id}
-                  divider={index !== users.length - 1}
-                  sx={{
-                    px: 0,
-                    borderColor: "rgba(0, 255, 234, 0.1)",
-                  }}
-                >
-                  <ListItemText
-                    primary={user.name}
-                    secondary={user.email}
-                    primaryTypographyProps={{
-                      sx: { color: "#00ffea", fontWeight: 600 },
+        {isLoading ? (
+          <Box
+            sx={{
+              py: 4,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <CircularProgress sx={{ color: "#00ffea" }} />
+          </Box>
+        ) : users.length === 0 ? (
+          <Typography variant="body2" sx={{ opacity: 0.7 }}>
+            No users available yet.
+          </Typography>
+        ) : (
+          <TableContainer
+            sx={{
+              borderRadius: 2,
+              border: "1px solid rgba(0, 255, 234, 0.14)",
+              background: "rgba(0, 255, 234, 0.04)",
+            }}
+          >
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    sx={{
+                      color: "#00ffea",
+                      fontWeight: 700,
+                      borderColor: "rgba(0, 255, 234, 0.14)",
                     }}
-                    secondaryTypographyProps={{
-                      sx: { color: "rgba(0, 255, 234, 0.72)" },
+                  >
+                    Name
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: "#00ffea",
+                      fontWeight: 700,
+                      borderColor: "rgba(0, 255, 234, 0.14)",
                     }}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          )}
-        </Paper>
+                  >
+                    Email
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: "#00ffea",
+                      fontWeight: 700,
+                      borderColor: "rgba(0, 255, 234, 0.14)",
+                    }}
+                  >
+                    Role
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {users.map((user) => (
+                  <TableRow
+                    key={user.id}
+                    sx={{
+                      "&:last-child td, &:last-child th": {
+                        borderBottom: 0,
+                      },
+                    }}
+                  >
+                    <TableCell
+                      sx={{
+                        color: "#00ffea",
+                        fontWeight: 600,
+                        borderColor: "rgba(0, 255, 234, 0.1)",
+                      }}
+                    >
+                      {user.name}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        color: "rgba(0, 255, 234, 0.8)",
+                        borderColor: "rgba(0, 255, 234, 0.1)",
+                      }}
+                    >
+                      {user.email}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        color: "rgba(0, 255, 234, 0.8)",
+                        textTransform: "capitalize",
+                        borderColor: "rgba(0, 255, 234, 0.1)",
+                      }}
+                    >
+                      {user.role}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Paper>
     </Box>
   );

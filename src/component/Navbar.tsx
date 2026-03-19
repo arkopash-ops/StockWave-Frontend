@@ -1,14 +1,51 @@
 import { Box, Typography } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const navItems = [
-  { label: "Login", path: "/" },
-  { label: "Register", path: "/register" },
-];
+const AUTH_TOKEN_KEY = "token";
+const USER_ROLE_KEY = "role";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const token = localStorage.getItem(AUTH_TOKEN_KEY);
+  const userRole = localStorage.getItem(USER_ROLE_KEY);
+  const isAuthenticated = Boolean(token);
+
+  const navItems = isAuthenticated
+    ? [
+        {
+          label: userRole === "trader" ? "Trader Dashboard" : "Admin Dashboard",
+          path:
+            userRole === "trader"
+              ? "/trader-dashboard"
+              : "/admin-dashboard",
+        },
+        { label: "Logout", path: "/" },
+      ]
+    : [
+        { label: "Login", path: "/" },
+        { label: "Register", path: "/register" },
+      ];
+
+  const handleNavigate = (label: string, path: string) => {
+    if (label === "Logout") {
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+      localStorage.removeItem(USER_ROLE_KEY);
+      navigate(path);
+      return;
+    }
+
+    navigate(path);
+  };
+
+  const handleLogoClick = () => {
+    if (!isAuthenticated) {
+      navigate("/");
+      return;
+    }
+
+    navigate(userRole === "trader" ? "/trader-dashboard" : "/admin-dashboard");
+  };
 
   return (
     <Box
@@ -36,6 +73,7 @@ const Navbar = () => {
           letterSpacing: 1,
           cursor: "pointer",
         }}
+        onClick={handleLogoClick}
       >
         StcokWave
       </Typography>
@@ -48,7 +86,7 @@ const Navbar = () => {
           return (
             <Typography
               key={item.label}
-              onClick={() => navigate(item.path)}
+              onClick={() => handleNavigate(item.label, item.path)}
               sx={{
                 cursor: "pointer",
                 position: "relative",
