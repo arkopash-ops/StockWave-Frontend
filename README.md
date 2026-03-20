@@ -1,73 +1,77 @@
-# React + TypeScript + Vite
+# StockWave Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for StockWave, built with React, TypeScript, Vite, Material UI, Axios, and Socket.IO.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- User login and registration
+- Role-based navigation for admin and trader users
+- Admin dashboard to view registered users
+- Trader dashboard to view live asset price updates
+- Real-time updates from the backend with Socket.IO
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19
+- TypeScript
+- Vite
+- Material UI
+- React Router
+- Axios
+- Socket.IO Client
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js 18+
+- npm
+- StockWave server running locally
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Install dependencies:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Start the development server:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+The app runs on `http://localhost:5173`.
+
+## Environment Variables
+
+The frontend uses Vite's dev proxy for API requests:
+
+- `/api/*` -> `http://localhost:8080`
+
+Optional environment variable:
+
+```env
+VITE_SOCKET_SERVER_URL=http://localhost:8080
+```
+
+If `VITE_SOCKET_SERVER_URL` is not set, the client falls back to `http://localhost:8080`.
+
+## Available Scripts
+
+- `npm run dev` - start the Vite development server
+- `npm run build` - type-check and create a production build
+- `npm run preview` - preview the production build locally
+- `npm run lint` - run ESLint
+
+## App Routes
+
+- `/` - login page
+- `/register` - registration page
+- `/admin-dashboard` - admin-only dashboard
+- `/trader-dashboard` - trader-only dashboard
+
+## Notes
+
+- The frontend stores the JWT token in `localStorage` under `token`.
+- The current user role is stored in `localStorage` under `role`.
+- For full functionality, start the backend before opening the dashboards.
